@@ -11,6 +11,9 @@ target/%.lua: src/%.fnl
 upload: $(LUA_OBJECTS)
 	$(NODEMCU_TOOL) upload $^
 
+restart:
+	$(NODEMCU_TOOL) run restart.lua
+
 terminal:
 	$(NODEMCU_TOOL) terminal
 

@@ -16,5 +16,26 @@
     (timer:register 5000 tmr.ALARM_AUTO read-temp)
     (timer:start)))
 
+(fn mqtt-connect []
+  (let [m  (mqtt.Client "clientid" 120)]
+    (m:connect "" 1883 false
+      (fn [client]
+        (print "mqtt connected"))
+      (fn [client reason]
+        (print reason)))))
+
+(fn wifi-events []
+  (wifi.eventmon.register wifi.eventmon.STA_CONNECTED
+    (fn [e]
+       (print "Wifi connected")
+       (mqtt-connect))))
+
+(fn setup-wifi []
+   (let [cfg {:ssid "" :pwd "" :save false}]
+     (wifi.setmode wifi.STATION)
+     (wifi.sta.config cfg)))
+
 (setup-i2c)
+(wifi-events)
+(setup-wifi)
 (create-timer)

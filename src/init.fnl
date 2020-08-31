@@ -17,7 +17,7 @@
     (timer:start)))
 
 (fn mqtt-connect []
-  (let [m  (mqtt.Client "clientid" 120)]
+  (let [m (mqtt.Client "clientid" 60)]
     (m:connect "" 1883 false
       (fn [client]
         (print "mqtt connected"))
@@ -25,7 +25,7 @@
         (print reason)))))
 
 (fn wifi-events []
-  (wifi.eventmon.register wifi.eventmon.STA_CONNECTED
+  (wifi.eventmon.register wifi.eventmon.STA_GOT_IP
     (fn [e]
        (print "Wifi connected")
        (mqtt-connect))))

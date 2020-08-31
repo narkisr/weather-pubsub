@@ -1,4 +1,4 @@
-LUA_OBJECTS=target/init.lua
+LUA_OBJECTS=target/init.lua target/restart.lua
 NODEMCU_TOOL=./node_modules/nodemcu-tool/bin/nodemcu-tool.js
 FENNEL=fennel
 

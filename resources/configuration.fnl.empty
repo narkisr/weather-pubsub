@@ -1,0 +1,10 @@
+(var configuration {
+  :mqtt {
+    :server ""
+    :client-id ""
+  }
+  :wifi {
+    :ssid ""
+    :password ""
+  }
+})

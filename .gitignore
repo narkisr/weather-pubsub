@@ -2,3 +2,4 @@ node_modules
 target
 package-lock.json
 resources/configuration.fnl
+resources/configuration.lua

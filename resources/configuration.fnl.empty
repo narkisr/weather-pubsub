@@ -2,9 +2,13 @@
   :mqtt {
     :server ""
     :client-id ""
+    :user ""
+    :password ""
+    port 1883
   }
   :wifi {
     :ssid ""
     :password ""
+    :hostname ""
   }
 })

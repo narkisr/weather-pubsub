@@ -22,6 +22,17 @@ Upload and compile:
 $ make upload
 ```
 
+Make sure enable the following when you build the nodemcu image:
+
+```bash
+// Mqtt and Wifi are enabled by default
+#define LUA_USE_MODULES_BME280
+#define LUA_USE_MODULES_BME280_MATH
+#define LUA_USE_MODULES_SJSON
+```
+
+
+
 # Copyright and license
 
 Copyright [2020] [Ronen Narkis]

@@ -8,13 +8,16 @@
   (bme280.setup))
 
 (fn read-temp [t]
-  (let [(T r) (bme280.temp)]
-     (print (.. "temp is " T))
+  (let [(T r) (bme280.temp)
+        {: hostname} (. configuration :wifi)]
      (when client
-       (let [payload (.. "{ " "temp" ":" T " }")]
-         (if (client:publish "/temp" payload  0 0)
-           (print "publish successful")
-           (print "publish failed"))))))
+       (let [payload {:temp T :type "bme280" :hostname hostname}
+             (ok enc) (pcall sjson.encode payload)]
+         (if ok
+           (if (client:publish "temp/reading" enc 0 0)
+              (print "publish successful")
+              (print "publish failed"))
+           (print "failed to encode payload"))))))
 
 (fn create-timer []
   (let [timer (tmr.create)]

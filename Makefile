@@ -16,7 +16,7 @@ upload: $(LUA_OBJECTS)
 	head -n 1 'resources/configuration.lua' > target/concat.lua
 	cat target/init.lua >> target/concat.lua
 	mv target/concat.lua target/init.lua
-	$(NODEMCU_TOOL) upload target/init.lua
+	$(NODEMCU_TOOL) upload target/init.lua target/restart.lua
 
 restart:
 	$(NODEMCU_TOOL) run restart.lua

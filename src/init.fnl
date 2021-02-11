@@ -9,26 +9,25 @@
   (i2c.setup 0 sda scl i2c.SLOW)
   (bme280.setup))
 
-(fn sleep []
+(fn take-sleep []
   (print "sleeping for one minute")
   (node.dsleep (* minute 30)))
 
-(fn read-temp [t]
+(fn read-temp [sleep t]
   (let [(T P H) (bme280.read)
         {: hostname} (. configuration :wifi)]
      (when client
        (let [payload {:temp T :humidity H :preasure P :type "bme280" :hostname hostname}
              (ok enc) (pcall sjson.encode payload)]
          (if ok
-           (if (client:publish "temp/reading" enc 0 0 (fn [client] (sleep)))
+           (if (client:publish "temp/reading" enc 0 0 (fn [client] (when sleep (take-sleep))))
               (print "publish successful")
               (print "publish failed"))
-           (print "failed to encode payload"))
-         ))))
+           (print "failed to encode payload"))))))
 
 (fn create-timer []
   (let [timer (tmr.create)]
-    (timer:register 10000 tmr.ALARM_AUTO read-temp)
+    (timer:register 60000 tmr.ALARM_AUTO (partial read-temp false))
     (timer:start)))
 
 (fn mqtt-connect []
@@ -59,4 +58,9 @@
 (setup-i2c)
 (wifi-events)
 (setup-wifi)
-(create-timer)
+
+(let [{: sleep} (. configuration :instance)]
+   (if (not sleep)
+     (create-timer)
+     (read-temp true nil)))
+

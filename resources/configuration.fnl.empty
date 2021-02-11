@@ -1,4 +1,7 @@
 (var configuration {
+  :instance {
+    :sleep false
+  }
   :mqtt {
     :server ""
     :client-id ""

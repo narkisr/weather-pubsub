@@ -3,6 +3,8 @@
 
 (var client nil)
 
+(var interval 5)
+
 (var minute (* 60 1000000))
 
 (fn setup-i2c []
@@ -10,14 +12,15 @@
   (bme280.setup))
 
 (fn take-sleep []
-  (print "sleeping for one minute")
-  (node.dsleep (* minute 30)))
+  (print "deep sleeping")
+  (node.dsleep (* minute interval)))
 
 (fn read-temp [sleep t]
   (let [(T P H) (bme280.read)
-        {: hostname} (. configuration :wifi)]
+        {: hostname} (. configuration :wifi)
+        {: location} (. configuration :instance)]
      (when client
-       (let [payload {:temp T :humidity H :preasure P :type "bme280" :hostname hostname}
+       (let [payload {:temp T :humidity H :preasure P :type "bme280" :hostname hostname :location location}
              (ok enc) (pcall sjson.encode payload)]
          (if ok
            (if (client:publish "temp/reading" enc 0 0 (fn [client] (when sleep (take-sleep))))
@@ -27,7 +30,7 @@
 
 (fn create-timer []
   (let [timer (tmr.create)]
-    (timer:register 60000 tmr.ALARM_AUTO (partial read-temp false))
+    (timer:register (* interval 60000) tmr.ALARM_AUTO (partial read-temp false))
     (timer:start)))
 
 (fn mqtt-connect []
@@ -38,7 +41,11 @@
     (m:connect server port false
       (fn [c]
         (print "mqtt connected")
-        (set client c))
+        (set client c)
+        (let [{: sleep} (. configuration :instance)]
+            (if (not sleep)
+               (create-timer)
+               (read-temp true nil))))
       (fn [client reason]
         (print (.. "failed to connect to mqtt due to " reason)))))))
 
@@ -59,8 +66,5 @@
 (wifi-events)
 (setup-wifi)
 
-(let [{: sleep} (. configuration :instance)]
-   (if (not sleep)
-     (create-timer)
-     (read-temp true nil)))
+
 

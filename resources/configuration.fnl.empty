@@ -1,13 +1,14 @@
 (var configuration {
   :instance {
     :sleep false
+    :location ""
   }
   :mqtt {
     :server ""
     :client-id ""
     :user ""
     :password ""
-    port 1883
+    :port 1883
   }
   :wifi {
     :ssid ""
